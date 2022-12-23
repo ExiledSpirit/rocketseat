@@ -13,6 +13,8 @@ export function Post({author, content, publishedAt}) {
 
   const [newCommentText, setNewCommentText] = useState('');
 
+  const isNewCommentEmpty = newCommentText.length === 0;
+
   const publishedDateFormated = format(
     publishedAt,
     "d 'de' LLLL 'às' HH:mm'h'",
@@ -38,6 +40,10 @@ export function Post({author, content, publishedAt}) {
 
   function handleNewCommentChange() {
     setNewCommentText(event.target.value);
+  }
+
+  function handleNewCommentInvalid() {
+    console.log(event);
   }
 
   function deleteComment(commentToDelete) {
@@ -83,9 +89,16 @@ export function Post({author, content, publishedAt}) {
           placeholder='Deixe seu comentário'
           value={newCommentText}
           onChange={handleNewCommentChange}
+          onInvalid={handleNewCommentInvalid}
+          required
         />
         <footer>
-          <button type='submit'>Comentar</button>
+          <button
+            type='submit'
+            disabled={isNewCommentEmpty}
+          >
+            Comentar
+          </button>
         </footer>
       </form>
 
