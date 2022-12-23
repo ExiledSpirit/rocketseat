@@ -1,11 +1,18 @@
 import { format, formatDistanceToNow } from 'date-fns'
 import ptBR from 'date-fns/locale/pt-BR';
+import { useState } from 'react';
 
 import { Avatar } from './Avatar';
 import { Comment } from './Comment';
 import styles from './Post.module.css';
 
 export function Post({author, content, publishedAt}) {
+  const [comments, setComments] = useState([
+    'Post muito bacana, hein?!',
+  ]);
+
+  const [newCommentText, setNewCommentText] = useState('');
+
   const publishedDateFormated = format(
     publishedAt,
     "d 'de' LLLL 'às' HH:mm'h'",
@@ -14,13 +21,24 @@ export function Post({author, content, publishedAt}) {
     }
   );
 
-    const publishedDateRelativaToNow = formatDistanceToNow(
-      publishedAt,
-      {
-        locale: ptBR,
-        addSuffix: true
-      }
-    )
+  const publishedDateRelativaToNow = formatDistanceToNow(
+    publishedAt,
+    {
+      locale: ptBR,
+      addSuffix: true
+    }
+  );
+
+  function handleCreateNewComment() {
+    event.preventDefault();
+
+    setComments([...comments, newCommentText]);
+    setNewCommentText('');
+  }
+
+  function handleNewCommentChange() {
+    setNewCommentText(event.target.value);
+  }
 
   return (
     <article className={styles.post}>
@@ -49,19 +67,26 @@ export function Post({author, content, publishedAt}) {
         }
       </div>
 
-      <form className={styles.commentForm}>
+      <form onSubmit={handleCreateNewComment} className={styles.commentForm}>
         <strong>Deixe seu feedback</strong>
 
-        <textarea placeholder='Deixe seu comentário'/>
+        <textarea
+          name='comment'
+          placeholder='Deixe seu comentário'
+          value={newCommentText}
+          onChange={handleNewCommentChange}
+        />
         <footer>
           <button type='submit'>Comentar</button>
         </footer>
       </form>
 
       <div className={styles.commentList}>
-        <Comment />
-        <Comment />
-        <Comment />
+        {
+          comments.map(comment => {
+            return <Comment content={comment} />
+          })
+        }
       </div>
     </article>
   );
