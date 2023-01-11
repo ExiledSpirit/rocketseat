@@ -29,6 +29,7 @@ interface Cycle {
   minutesAmount: number;
   startDate: Date;
   interruptedDate?: Date;
+  finishedDate?: Date;
 }
 
 type NewCycleFormData = zod.infer<typeof newCycleFormValidationSchema>;
@@ -69,7 +70,24 @@ export function Home() {
 
     if (activeCycle) {
       interval = setInterval(() => {
-        setAmountSecondsPassed(differenceInSeconds(new Date(), activeCycle.startDate));
+        const secondsDifference = differenceInSeconds(new Date(), activeCycle.startDate);
+
+        if (secondsDifference >= totalSeconds) {
+          setCycles(cycles =>
+            cycles.map(cycle => {
+              if (cycle.id === activeCycleId) {
+                return {...cycle, finishedDate: new Date()};
+              } else {
+                return cycle;
+              }
+            }),
+          );
+
+          setAmountSecondsPassed(totalSeconds);
+          clearInterval(interval);
+        } else {
+          setAmountSecondsPassed(secondsDifference);
+        }
       }, 1000)
     }
 
@@ -77,7 +95,7 @@ export function Home() {
       clearInterval(interval);
     }
 
-  }, [activeCycle])
+  }, [activeCycle, totalSeconds])
 
   function handleCreateNewCycle(data: NewCycleFormData) {
     const id = String(new Date().getTime());
