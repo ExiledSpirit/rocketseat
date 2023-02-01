@@ -24,7 +24,7 @@ export function Post({author, content, publishedAt}) {
   );
 
   const publishedDateRelativaToNow = formatDistanceToNow(
-    publishedAt,
+    new Date(publishedAt),
     {
       locale: ptBR,
       addSuffix: true

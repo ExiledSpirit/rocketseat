@@ -37,7 +37,7 @@ export function History() {
                   <tr>
                     <td>{cycle.task}</td>
                     <td>{cycle.minutesAmount}</td>
-                    <td>{formatDate(cycle.startDate)}</td>
+                    <td>{formatDate(new Date(cycle.startDate))}</td>
                     <td>
                       {cycle.finishedDate && (
                         <Status statusColor="green">Concluído</Status>
